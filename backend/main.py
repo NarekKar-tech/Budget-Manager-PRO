@@ -6,12 +6,20 @@ from app.core.config import settings
 
 app = FastAPI(title=settings.APP_NAME, version="1.0.0")
 
+# 1. Define the domains allowed to make requests to your API
+origins = [
+    "http://localhost:3000",      # React local development
+    "http://localhost:5173",      # Vite / Vue local development
+    "https://yourfrontend.com",   # Production frontend domain
+]
+
+# 2. Add the CORS middleware to your FastAPI application
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=origins,           # Allowed domains
+    allow_credentials=True,         # Allow cookies and auth headers
+    allow_methods=["*"],             # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],             # Allow all HTTP headers
 )
 
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
