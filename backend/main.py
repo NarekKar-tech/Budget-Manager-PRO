@@ -10,12 +10,14 @@ app = FastAPI(title=settings.APP_NAME, version="1.0.0")
 origins = [
     "http://localhost:3000",      # React local development
     "http://localhost:5173",      # Vite / Vue local development
-    "https://yourfrontend.com",   # Production frontend domain
+    "https://yourfrontend.com", 
+    "http://192.168.1.12:3000"  # Production frontend domain
 ]
 
 # 2. Add the CORS middleware to your FastAPI application
 app.add_middleware(
     CORSMiddleware,
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1|172\.17\.0\.\d+):3000",  # Allow all origins (for development purposes)
     allow_origins=origins,           # Allowed domains
     allow_credentials=True,         # Allow cookies and auth headers
     allow_methods=["*"],             # Allow all HTTP methods (GET, POST, etc.)
