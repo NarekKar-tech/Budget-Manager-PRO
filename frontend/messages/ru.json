@@ -1,0 +1,18 @@
+{
+  "dashboard": "Панель управления",
+  "transactions": "Транзакции",
+  "budgets": "Бюджеты",
+  "categories": "Категории",
+  "analytics": "Аналитика",
+  "signOut": "Выйти",
+
+  "totalBalance": "Общий баланс",
+  "incomeMinusExpenses": "Доходы минус расходы",
+  "monthlyIncome": "Доход за месяц",
+  "monthlyExpenses": "Расходы за месяц",
+  "currentMonth": "Текущий месяц",
+  "savingsRate": "Уровень сбережений",
+  "cashFlowTrend": "Динамика денежных потоков",
+  "expenseBreakdown": "Структура расходов",
+  "recentTransactions": "Последние транзакции"
+}

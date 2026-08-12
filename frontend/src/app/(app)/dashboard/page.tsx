@@ -12,6 +12,7 @@ import { CategoryChart, TrendChart } from "@/components/charts";
 import { StatCard } from "@/components/stat-card";
 import { api } from "@/lib/api";
 import type { DashboardSummary, Transaction } from "@/types";
+import { useLanguage } from "@/context/LanguageContext";
 
 const money = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -21,6 +22,7 @@ const money = new Intl.NumberFormat("en-US", {
 export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     Promise.all([
@@ -45,38 +47,84 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <h2 className="text-3xl font-semibold">Dashboard</h2>
+      <h2 className="text-3xl font-semibold">
+        {t("dashboard")}
+      </h2>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Total balance" value={money.format(Number(summary?.balance ?? 0))} detail="Income minus expenses" icon={Wallet} />
-        <StatCard label="Monthly income" value={money.format(Number(summary?.income ?? 0))} detail="Current month" icon={ArrowUpRight} />
-        <StatCard label="Monthly expenses" value={money.format(Number(summary?.expense ?? 0))} detail="Current month" icon={ArrowDownRight} />
-        <StatCard label="Savings rate" value={`${summary?.savings_rate ?? 0}%`} detail="Current month" icon={PiggyBank} />
+        <StatCard
+          label={t("totalBalance")}
+          value={money.format(Number(summary?.balance ?? 0))}
+          detail={t("incomeMinusExpenses")}
+          icon={Wallet}
+        />
+
+        <StatCard
+          label={t("monthlyIncome")}
+          value={money.format(Number(summary?.income ?? 0))}
+          detail={t("currentMonth")}
+          icon={ArrowUpRight}
+        />
+
+        <StatCard
+          label={t("monthlyExpenses")}
+          value={money.format(Number(summary?.expense ?? 0))}
+          detail={t("currentMonth")}
+          icon={ArrowDownRight}
+        />
+
+        <StatCard
+          label={t("savingsRate")}
+          value={`${summary?.savings_rate ?? 0}%`}
+          detail={t("currentMonth")}
+          icon={PiggyBank}
+        />
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
         <div className="glass rounded-3xl p-6">
-          <h3 className="text-lg font-semibold">Cash flow trend</h3>
+          <h3 className="text-lg font-semibold">
+            {t("cashFlowTrend")}
+          </h3>
+
           <TrendChart data={trend} />
         </div>
+
         <div className="glass rounded-3xl p-6">
-          <h3 className="text-lg font-semibold">Expense breakdown</h3>
+          <h3 className="text-lg font-semibold">
+            {t("expenseBreakdown")}
+          </h3>
+
           <CategoryChart data={categories} />
         </div>
       </div>
 
       <div className="glass mt-6 rounded-3xl p-6">
-        <h3 className="text-lg font-semibold">Recent transactions</h3>
+        <h3 className="text-lg font-semibold">
+          {t("recentTransactions")}
+        </h3>
+
         <div className="mt-5 divide-y divide-white/5">
           {transactions.map((item) => (
-            <div key={item.id} className="flex items-center justify-between py-4">
+            <div
+              key={item.id}
+              className="flex items-center justify-between py-4"
+            >
               <div>
                 <p className="font-medium">{item.title}</p>
+
                 <p className="text-xs text-slate-500">
                   {item.category.name} · {item.transaction_date}
                 </p>
               </div>
-              <p className={item.type === "income" ? "text-emerald-300" : ""}>
+
+              <p
+                className={
+                  item.type === "income"
+                    ? "text-emerald-300"
+                    : ""
+                }
+              >
                 {item.type === "income" ? "+" : "-"}
                 {money.format(Number(item.amount))}
               </p>
