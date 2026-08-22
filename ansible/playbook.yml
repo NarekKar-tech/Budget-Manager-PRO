@@ -1,0 +1,46 @@
+---
+- name: Configure EC2 and deploy app
+  hosts: app
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install Docker, Compose and Git
+      apt:
+        name:
+          - docker.io
+          - docker-compose-v2
+          - git
+        state: present
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Clone project repository
+      git:
+        repo: "https://github.com/NarekKar-tech/Budget-Manager-PRO.git"
+        dest: /home/ubuntu/budget-manager-pro
+        version: hw15
+        force: true
+      become_user: ubuntu
+
+    - name: Copy environment file
+      copy:
+        src: ../.env
+        dest: /home/ubuntu/budget-manager-pro/.env
+        owner: ubuntu
+        group: ubuntu
+        mode: "0600"
+
+    - name: Start Docker Compose stack
+      command:
+        cmd: docker compose up -d
+        chdir: /home/ubuntu/budget-manager-pro
+      changed_when: false
