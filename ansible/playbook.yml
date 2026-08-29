@@ -1,6 +1,6 @@
 ---
 - name: Configure EC2 and deploy app
-  hosts: app
+  hosts: aws_ec2
   become: true
 
   tasks:
@@ -27,7 +27,7 @@
       git:
         repo: "https://github.com/NarekKar-tech/Budget-Manager-PRO.git"
         dest: /home/ubuntu/budget-manager-pro
-        version: hw15
+        version: test-bud-pro
         force: true
       become_user: ubuntu
 
@@ -39,8 +39,15 @@
         group: ubuntu
         mode: "0600"
 
+    - name: Set frontend API URL using EC2 public IP
+      lineinfile:
+        path: /home/ubuntu/budget-manager-pro/.env
+        regexp: '^NEXT_PUBLIC_API_URL='
+        line: "NEXT_PUBLIC_API_URL=http://{{ inventory_hostname }}:8000/api/v1"
+        create: true
+
     - name: Start Docker Compose stack
       command:
-        cmd: docker compose up -d
+        cmd: docker compose up -d --build
         chdir: /home/ubuntu/budget-manager-pro
       changed_when: false
