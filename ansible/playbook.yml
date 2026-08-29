@@ -46,6 +46,13 @@
         line: "NEXT_PUBLIC_API_URL=http://{{ inventory_hostname }}:8000/api/v1"
         create: true
 
+    - name: Set frontend URL for backend CORS
+      lineinfile:
+        path: /home/ubuntu/budget-manager-pro/.env
+        regexp: '^FRONTEND_URL='
+        line: "FRONTEND_URL=http://{{ inventory_hostname }}:3000"
+        create: true
+
     - name: Start Docker Compose stack
       command:
         cmd: docker compose up -d --build
