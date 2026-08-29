@@ -1,0 +1,18 @@
+{
+  "dashboard": "Գլխավոր",
+  "transactions": "Գործարքներ",
+  "budgets": "Բյուջեներ",
+  "categories": "Կատեգորիաներ",
+  "analytics": "Վերլուծություն",
+  "signOut": "Դուրս գալ",
+
+  "totalBalance": "Ընդհանուր մնացորդ",
+  "incomeMinusExpenses": "Եկամուտը հանած ծախսերը",
+  "monthlyIncome": "Ամսական եկամուտ",
+  "monthlyExpenses": "Ամսական ծախսեր",
+  "currentMonth": "Ընթացիկ ամիս",
+  "savingsRate": "Խնայողության տոկոս",
+  "cashFlowTrend": "Դրամական հոսքերի միտում",
+  "expenseBreakdown": "Ծախսերի բաշխում",
+  "recentTransactions": "Վերջին գործարքները"
+}

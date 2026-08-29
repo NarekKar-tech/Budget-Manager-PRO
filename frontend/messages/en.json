@@ -1,0 +1,18 @@
+{
+  "dashboard": "Dashboard",
+  "transactions": "Transactions",
+  "budgets": "Budgets",
+  "categories": "Categories",
+  "analytics": "Analytics",
+  "signOut": "Sign out",
+
+  "totalBalance": "Total balance",
+  "incomeMinusExpenses": "Income minus expenses",
+  "monthlyIncome": "Monthly income",
+  "monthlyExpenses": "Monthly expenses",
+  "currentMonth": "Current month",
+  "savingsRate": "Savings rate",
+  "cashFlowTrend": "Cash flow trend",
+  "expenseBreakdown": "Expense breakdown",
+  "recentTransactions": "Recent transactions"
+}
