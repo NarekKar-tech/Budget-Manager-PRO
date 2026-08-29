@@ -58,3 +58,8 @@
         cmd: docker compose up -d --build
         chdir: /home/ubuntu/budget-manager-pro
       changed_when: false
+
+    - name: Run database migrations
+      command:
+        cmd: docker exec budget-backend alembic upgrade head
+      changed_when: false
