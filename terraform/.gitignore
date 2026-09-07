@@ -1,0 +1,25 @@
+# Terraform local state and plugin cache
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Terraform plans
+tfplan
+*.tfplan
+plan*.txt
+
+# Sensitive variable definitions
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Private keys and DB dumps
+*.pem
+*.key
+*.dump
+*.sql
