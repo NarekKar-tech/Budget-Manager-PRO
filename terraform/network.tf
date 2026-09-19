@@ -16,16 +16,29 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_subnet" "public_app" {
+resource "aws_subnet" "public_app_a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.18.1.0/24"
   availability_zone       = "${var.aws_region}a"
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.project_prefix}-public-app-subnet"
+    Name = "${var.project_prefix}-public-app-subnet-a"
   }
 }
+
+resource "aws_subnet" "public_app_b" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.18.4.0/24"
+  availability_zone       = "${var.aws_region}b"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "${var.project_prefix}-public-app-subnet-b"
+  }
+}
+
+
 
 resource "aws_subnet" "private_db_a" {
   vpc_id            = aws_vpc.main.id
@@ -60,11 +73,41 @@ resource "aws_route_table" "public" {
   }
 }
 
-resource "aws_route_table_association" "public_app" {
-  subnet_id      = aws_subnet.public_app.id
+resource "aws_route_table_association" "public_app_a" {
+  subnet_id      = aws_subnet.public_app_a.id
   route_table_id = aws_route_table.public.id
 }
 
+resource "aws_route_table_association" "public_app_b" {
+  subnet_id      = aws_subnet.public_app_b.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_security_group" "alb_sg" {
+  name        = "${var.project_prefix}-alb-sg"
+  description = "Security group for ALB"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "HTTP from internet"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project_prefix}-alb-sg"
+  }
+}
 resource "aws_security_group" "app_sg" {
   name        = "${var.project_prefix}-app-sg"
   description = "Security group for public application host"
@@ -79,19 +122,19 @@ resource "aws_security_group" "app_sg" {
   }
 
   ingress {
-    description = "Backend application traffic"
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    description     = "Backend traffic from ALB"
+    from_port       = 8000
+    to_port         = 8000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
   }
 
   ingress {
-    description = "Frontend application traffic"
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    description     = "Frontend traffic from ALB"
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
   }
 
   egress {

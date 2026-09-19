@@ -23,9 +23,9 @@ resource "aws_db_instance" "postgres" {
   max_allocated_storage = 20
   storage_type          = "gp3"
 
-  db_name  = "budget_manager_pro"
-  username = "budget_admin"
-  password = var.db_password
+  db_name                     = "budget_manager_pro"
+  username                    = "budget_admin"
+  manage_master_user_password = true
 
   db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
   vpc_security_group_ids = [aws_security_group.db_sg.id]
