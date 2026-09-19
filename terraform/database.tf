@@ -13,18 +13,14 @@ resource "aws_db_subnet_group" "rds_subnets" {
 }
 
 resource "aws_db_instance" "postgres" {
-  identifier = "${var.project_prefix}-rds"
-
-  engine         = "postgres"
-  engine_version = "16.3"
+  identifier          = "${var.project_prefix}-rds"
+  snapshot_identifier = "budget-hw18-final-backup"
 
   instance_class        = "db.t3.micro"
   allocated_storage     = 20
   max_allocated_storage = 20
   storage_type          = "gp3"
 
-  db_name                     = "budget_manager_pro"
-  username                    = "budget_admin"
   manage_master_user_password = true
 
   db_subnet_group_name   = aws_db_subnet_group.rds_subnets.name
