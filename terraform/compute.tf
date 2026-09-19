@@ -46,7 +46,7 @@ resource "aws_launch_template" "app" {
 
   APP_DIR=/opt/budget-manager-pro
 
-  git clone https://github.com/NarekKar-tech/Budget-Manager-PRO.git "$APP_DIR"
+  git clone --branch hw21 --single-branch https://github.com/NarekKar-tech/Budget-Manager-PRO.git "$APP_DIR"
   cd "$APP_DIR"
 
   # Ներբեռնում ենք երկու EC2-ների ընդհանուր կարգավորումները։
