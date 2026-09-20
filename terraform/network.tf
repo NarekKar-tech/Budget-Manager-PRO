@@ -118,7 +118,7 @@ resource "aws_security_group" "app_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.my_ip]
+    cidr_blocks = ["${trimspace(data.http.my_ip.response_body)}/32"]
   }
 
   ingress {
@@ -174,4 +174,8 @@ resource "aws_security_group" "db_sg" {
   tags = {
     Name = "${var.project_prefix}-db-sg"
   }
+}
+
+data "http" "my_ip" {
+  url = "https://checkip.amazonaws.com"
 }
