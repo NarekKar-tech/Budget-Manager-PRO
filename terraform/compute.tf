@@ -39,7 +39,11 @@ resource "aws_launch_template" "app" {
   exec > >(tee -a /var/log/project-bootstrap.log) 2>&1
 
   apt-get update
-  apt-get install -y docker.io docker-compose-v2 git postgresql-client awscli python3
+  apt-get install -y docker.io docker-compose-v2 git postgresql-client python3 curl unzip
+
+curl -fsSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscliv2.zip
+unzip -q /tmp/awscliv2.zip -d /tmp
+/tmp/aws/install
 
   systemctl enable --now docker
   usermod -aG docker ubuntu
