@@ -33,7 +33,7 @@ resource "aws_launch_template" "app" {
   ]
 
   user_data = base64encode(<<-EOF
-  #!/bin/bash
+#!/bin/bash
   set -euo pipefail
 
   exec > >(tee -a /var/log/project-bootstrap.log) 2>&1
