@@ -23,3 +23,5 @@ override.tf.json
 *.key
 *.dump
 *.sql
+# Terraform backup files
+*.tf.backup

@@ -25,3 +25,9 @@ variable "db_password" {
     error_message = "The db_password must be at least 10 characters long."
   }
 }
+
+variable "environment" {
+  description = "Deployment environment"
+  type        = string
+  default     = "dev"
+}
