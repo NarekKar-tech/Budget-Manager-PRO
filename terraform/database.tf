@@ -2,10 +2,7 @@ resource "aws_db_subnet_group" "rds_subnets" {
   name        = "${var.project_prefix}-db-subnet-group"
   description = "RDS subnet group across two Availability Zones"
 
-  subnet_ids = [
-    aws_subnet.private_db_a.id,
-    aws_subnet.private_db_b.id
-  ]
+  subnet_ids = module.networking.private_db_subnet_ids
 
   tags = {
     Name = "${var.project_prefix}-db-subnet-group"

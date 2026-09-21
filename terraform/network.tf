@@ -1,92 +1,7 @@
-resource "aws_vpc" "main" {
-  cidr_block           = "10.18.0.0/16"
-  enable_dns_hostnames = true
-  enable_dns_support   = true
-
-  tags = {
-    Name = "${var.project_prefix}-vpc"
-  }
-}
-
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.main.id
-
-  tags = {
-    Name = "${var.project_prefix}-igw"
-  }
-}
-
-resource "aws_subnet" "public_app_a" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.18.1.0/24"
-  availability_zone       = "${var.aws_region}a"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "${var.project_prefix}-public-app-subnet-a"
-  }
-}
-
-resource "aws_subnet" "public_app_b" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.18.4.0/24"
-  availability_zone       = "${var.aws_region}b"
-  map_public_ip_on_launch = true
-
-  tags = {
-    Name = "${var.project_prefix}-public-app-subnet-b"
-  }
-}
-
-
-
-resource "aws_subnet" "private_db_a" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.18.2.0/24"
-  availability_zone = "${var.aws_region}a"
-
-  tags = {
-    Name = "${var.project_prefix}-private-db-subnet-a"
-  }
-}
-
-resource "aws_subnet" "private_db_b" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.18.3.0/24"
-  availability_zone = "${var.aws_region}b"
-
-  tags = {
-    Name = "${var.project_prefix}-private-db-subnet-b"
-  }
-}
-
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
-
-  tags = {
-    Name = "${var.project_prefix}-public-rt"
-  }
-}
-
-resource "aws_route_table_association" "public_app_a" {
-  subnet_id      = aws_subnet.public_app_a.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "public_app_b" {
-  subnet_id      = aws_subnet.public_app_b.id
-  route_table_id = aws_route_table.public.id
-}
-
 resource "aws_security_group" "alb_sg" {
   name        = "${var.project_prefix}-alb-sg"
   description = "Security group for ALB"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.networking.vpc_id
 
   ingress {
     description = "HTTP from internet"
@@ -108,10 +23,11 @@ resource "aws_security_group" "alb_sg" {
     Name = "${var.project_prefix}-alb-sg"
   }
 }
+
 resource "aws_security_group" "app_sg" {
   name        = "${var.project_prefix}-app-sg"
   description = "Security group for public application host"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.networking.vpc_id
 
   ingress {
     description = "SSH from my IP"
@@ -153,7 +69,7 @@ resource "aws_security_group" "app_sg" {
 resource "aws_security_group" "db_sg" {
   name        = "${var.project_prefix}-db-sg"
   description = "Security group for private RDS PostgreSQL"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = module.networking.vpc_id
 
   ingress {
     description     = "PostgreSQL from App EC2 only"
@@ -168,7 +84,7 @@ resource "aws_security_group" "db_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [aws_vpc.main.cidr_block]
+    cidr_blocks = ["10.18.0.0/16"]
   }
 
   tags = {
