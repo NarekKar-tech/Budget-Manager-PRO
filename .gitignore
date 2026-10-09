@@ -17,3 +17,6 @@ dist/
 *.pem
 
 /app.env
+
+# Local Kubernetes configuration
+/k8s/local/
