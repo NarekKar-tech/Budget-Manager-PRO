@@ -50,12 +50,12 @@ metadata:
   name: frontend-service
   namespace: budget-manager
 spec:
-  type: NodePort
+  type: ClusterIP
 
   selector:
     app: frontend
 
   ports:
-    - port: 3000
+    - port: 80
       targetPort: 3000
       protocol: TCP
