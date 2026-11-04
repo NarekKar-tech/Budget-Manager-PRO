@@ -1,0 +1,21 @@
+
+backend:
+  replicaCount: 3
+  image:
+    tag: "v1.4"
+
+frontend:
+  replicaCount: 2
+  image:
+    tag: "v1.6"
+
+config:
+  appEnv: production
+  logLevel: warn
+  corsOrigins: "https://app.prod.local"
+  frontendUrl: "https://app.prod.local"
+
+ingress:
+  enabled: true
+  frontendHost: app.prod.local
+  backendHost: api.prod.local
