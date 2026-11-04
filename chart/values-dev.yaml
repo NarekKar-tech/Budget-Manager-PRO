@@ -1,0 +1,17 @@
+
+backend:
+  replicaCount: 1
+
+frontend:
+  replicaCount: 1
+
+config:
+  appEnv: development
+  logLevel: debug
+  corsOrigins: "http://app.hw32.local"
+  frontendUrl: "http://app.hw32.local"
+
+ingress:
+  enabled: true
+  frontendHost: app.hw32.local
+  backendHost: api.hw32.local

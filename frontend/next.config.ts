@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       {
         source: "/api/v1/:path*",
         destination:
-          "http://backend-service:8000/api/v1/:path*",
+          `${process.env.BACKEND_INTERNAL_URL || "http://backend-service:8000"}/api/v1/:path*`,
       },
     ];
   },

@@ -20,3 +20,6 @@ dist/
 
 # Local Kubernetes configuration
 /k8s/local/
+
+# Local Helm secrets
+chart/values-local.yaml

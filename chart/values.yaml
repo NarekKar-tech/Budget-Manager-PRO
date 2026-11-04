@@ -1,0 +1,68 @@
+backend:
+  replicaCount: 3
+  image:
+    repository: budget-backend
+    tag: "v1.4"
+    pullPolicy: IfNotPresent
+  port: 8000
+  service:
+    port: 8000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 384Mi
+
+frontend:
+  replicaCount: 2
+  image:
+    repository: budget-frontend
+    tag: "v1.6"
+    pullPolicy: IfNotPresent
+  port: 3000
+  service:
+    port: 80
+  apiUrl: "/api/v1"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 384Mi
+
+database:
+  image:
+    repository: postgres
+    tag: "15-alpine"
+    pullPolicy: IfNotPresent
+  port: 5432
+  name: budget_manager_pro
+  user: budget_admin
+  storage:
+    size: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 384Mi
+
+config:
+  appEnv: development
+  logLevel: info
+  corsOrigins: "http://app.budget.local,http://localhost:3000"
+  frontendUrl: "http://app.budget.local"
+
+ingress:
+  enabled: true
+  className: nginx
+  frontendHost: app.budget.local
+  backendHost: api.budget.local
+
+secrets:
+  databasePassword: ""
+  secretKey: ""
