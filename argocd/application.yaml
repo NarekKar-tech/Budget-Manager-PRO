@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: budget-manager
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/NarekKar-tech/Budget-Manager-PRO.git
+    targetRevision: hw36
+    path: chart
+    helm:
+      releaseName: budget
+      valueFiles:
+        - values-dev.yaml
+        - values-argocd.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hw36
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

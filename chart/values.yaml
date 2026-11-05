@@ -64,5 +64,6 @@ ingress:
   backendHost: api.budget.local
 
 secrets:
+  create: true
   databasePassword: ""
   secretKey: ""
