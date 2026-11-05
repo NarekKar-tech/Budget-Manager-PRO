@@ -62,3 +62,20 @@ jobs:
           IMAGE_TAG="${GITHUB_SHA::7}"
           minikube image load "budget-backend:${IMAGE_TAG}"
           minikube image load "budget-frontend:${IMAGE_TAG}"
+
+      - name: Deploy to Minikube with Helm
+        run: |
+          IMAGE_TAG="${GITHUB_SHA::7}"
+
+          helm upgrade budget ./chart \
+            --namespace hw32 \
+            --reuse-values \
+            --set-string backend.image.tag="$IMAGE_TAG" \
+            --set-string frontend.image.tag="$IMAGE_TAG" \
+            --wait \
+            --timeout 5m
+
+      - name: Verify Kubernetes rollout
+        run: |
+          minikube kubectl -- rollout status deployment/budget-backend -n hw32 --timeout=180s
+          minikube kubectl -- rollout status deployment/budget-frontend -n hw32 --timeout=180s
