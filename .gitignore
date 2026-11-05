@@ -23,3 +23,4 @@ dist/
 
 # Local Helm secrets
 chart/values-local.yaml
+.ci-venv/

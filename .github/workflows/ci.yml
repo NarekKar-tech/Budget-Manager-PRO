@@ -1,0 +1,61 @@
+name: Budget Manager Pro CI
+
+on:
+  push:
+    branches:
+      - hw36
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: Build and Test
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show commit
+        run: git rev-parse --short HEAD
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Test backend with Python 3.12
+        run: |
+          docker run --rm \
+            -v "$PWD/backend:/app" \
+            -w /app \
+            python:3.12-slim \
+            sh -c "pip install -r requirements-dev.txt && python -m pytest tests/test_health.py -v"
+
+      - name: Lint Helm Chart
+        run: helm lint ./chart -f ./chart/values-dev.yaml
+
+      - name: Build backend Docker image
+        run: |
+          IMAGE_TAG="${GITHUB_SHA::7}"
+          docker build \
+            -f backend/Dockerfile \
+            -t "budget-backend:${IMAGE_TAG}" \
+            ./backend
+
+      - name: Build frontend Docker image
+        run: |
+          IMAGE_TAG="${GITHUB_SHA::7}"
+          docker build \
+            -f frontend/Dockerfile \
+            --build-arg BACKEND_INTERNAL_URL=http://budget-backend-service:8000 \
+            -t "budget-frontend:${IMAGE_TAG}" \
+            ./frontend
+
+      - name: Load Docker images into Minikube
+        run: |
+          IMAGE_TAG="${GITHUB_SHA::7}"
+          minikube image load "budget-backend:${IMAGE_TAG}"
+          minikube image load "budget-frontend:${IMAGE_TAG}"
