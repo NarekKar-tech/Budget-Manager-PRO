@@ -70,6 +70,7 @@ jobs:
           helm upgrade budget ./chart \
             --namespace hw32 \
             --reuse-values \
+            --set secrets.create=true \
             --set-string backend.image.tag="$IMAGE_TAG" \
             --set-string frontend.image.tag="$IMAGE_TAG" \
             --wait \
