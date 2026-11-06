@@ -1,9 +1,13 @@
 
 backend:
   replicaCount: 1
+  image:
+    tag: "9a198ab"
 
 frontend:
   replicaCount: 1
+  image:
+    tag: "9a198ab"
 
 config:
   appEnv: development
