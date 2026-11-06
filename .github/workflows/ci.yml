@@ -5,6 +5,8 @@ on:
     branches:
       - hw36
   workflow_dispatch:
+permissions:
+  contents: write
 
 jobs:
   ci:
@@ -63,20 +65,43 @@ jobs:
           minikube image load "budget-backend:${IMAGE_TAG}"
           minikube image load "budget-frontend:${IMAGE_TAG}"
 
-      - name: Deploy to Minikube with Helm
+      - name: Update Helm image tags
         run: |
           IMAGE_TAG="${GITHUB_SHA::7}"
 
-          helm upgrade budget ./chart \
-            --namespace hw32 \
-            --reuse-values \
-            --set secrets.create=true \
-            --set-string backend.image.tag="$IMAGE_TAG" \
-            --set-string frontend.image.tag="$IMAGE_TAG" \
-            --wait \
-            --timeout 5m
+          python3 - "$IMAGE_TAG" <<'PY'
+          import sys
+          from pathlib import Path
 
-      - name: Verify Kubernetes rollout
+          tag = sys.argv[1]
+          path = Path("chart/values-dev.yaml")
+          content = path.read_text()
+
+          for component in ("backend", "frontend"):
+              start = content.index(f"{component}:")
+              image_start = content.index("  image:", start)
+              tag_start = content.index('    tag: "', image_start)
+              tag_end = content.index('"', tag_start + len('    tag: "'))
+
+              content = (
+                  content[:tag_start]
+                  + f'    tag: "{tag}'
+                  + content[tag_end:]
+              )
+
+          path.write_text(content)
+          PY
+
+      - name: Commit and push Helm image tags
         run: |
-          minikube kubectl -- rollout status deployment/budget-backend -n hw32 --timeout=180s
-          minikube kubectl -- rollout status deployment/budget-frontend -n hw32 --timeout=180s
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add chart/values-dev.yaml
+
+          if git diff --cached --quiet; then
+            echo "No image tag changes"
+          else
+            git commit -m "chore: update dev image tags [skip ci]"
+            git push origin HEAD:hw36
+          fi
